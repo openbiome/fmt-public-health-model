@@ -10,11 +10,22 @@ n_plot_points <- 1e3
 max_nnt <- 10
 
 # Load variates
+estimates <- readRDS("cache/estimates.rds")
 variates <- readRDS("cache/variates.rds")
 
-# Bootstrapping model
+# Point estimate model
 us <- c(0, 0.50, 1.0)
 
+point_estimates <- tibble(u = us) %>%
+  mutate(
+    params = map(u, ~ `[[<-`(estimates, "u", .)),
+    outcomes = map(params, model_call)
+  ) %>%
+  select(u, outcomes) %>%
+  unnest_longer(outcomes, values_to = "point_estimate", indices_to = "param")
+
+
+# Bootstrapping model
 simulations <- tibble(u = us) %>%
   mutate(
     params = map(u, ~ `[[<-`(variates, "u", .)),
@@ -26,11 +37,11 @@ cis <- simulations %>%
   select(u, outcomes) %>%
   unnest_longer(outcomes, values_to = "values", indices_to = "param") %>%
   mutate(
-    estimate = map_dbl(values, mean),
     lci = map_dbl(values, ~ quantile(., ci_quantiles[1])),
     uci = map_dbl(values, ~ quantile(., ci_quantiles[2]))
   ) %>%
-  select(u, param, estimate, lci, uci)
+  select(u, param, lci, uci) %>%
+  left_join(point_estimates, by = c("u", "param"))
 
 write_tsv(cis, "output/outcomes-cis.tsv")
 
@@ -58,7 +69,7 @@ plot_data <- simulation_data %>%
   pivot_longer(model_outcomes, names_to = "outcome_name", values_to = "outcome_value") %>%
   mutate(
     param_label = recode(param_name,
-      Cdot = "C[symbol('\\267')]",
+      Cdot = "C[symbol('\\267')] / 10^3",
       p1 = "p[1]",
       p2 = "p[2]",
       pabx = "p[abx]",

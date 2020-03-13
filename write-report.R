@@ -19,7 +19,7 @@ params <- read_tsv("output/parameters.tsv") %>%
 
 outcomes <- read_tsv("output/outcomes-cis.tsv") %>%
   mutate_if(is.numeric, ~ signif(., 2)) %>%
-  mutate(range = str_glue("{estimate} ({lci} to {uci})")) %>%
+  mutate(range = str_glue("{point_estimate} ({lci} to {uci})")) %>%
   select(param, u, range) %>%
   arrange(param, u, range)
 
