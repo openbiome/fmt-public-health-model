@@ -8,8 +8,8 @@ Cdot <- 453000
 Cdot_lci <- 400000
 Cdot_uci <- 510000
 
-E <- 10
-E_min <- 5
+E <- 15
+E_min <- 10
 E_max <- 20
 
 # Model formulation
