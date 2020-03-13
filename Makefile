@@ -26,5 +26,5 @@ output/sensitivity.tsv: cache/estimates.rds analyze-sensitivity.R util.R model.R
 output/outcomes-cis.tsv output/exclusion-counts.tsv fig/outcomes.pdf fig/outcomes.png: cache/variates.rds analyze-bootstraps.R util.R model.R
 	./analyze-bootstraps.R
 
-output/report.txt: output/parameters.tsv output/sensitivity.tsv output/outcomes-cis.tsv make-report.R
-	./make-report.R
+output/report.txt: output/parameters.tsv output/sensitivity.tsv output/outcomes-cis.tsv write-report.R
+	./write-report.R
