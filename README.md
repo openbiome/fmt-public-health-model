@@ -1,5 +1,7 @@
 # Code for "The public health impact of fecal microbiota transplantation"
 
+[![DOI](https://zenodo.org/badge/246922459.svg)](https://zenodo.org/badge/latestdoi/246922459)
+
 ## File structure
 
 The top level directory has a `Makefile`, which shows the analysis
