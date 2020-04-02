@@ -4,7 +4,7 @@ model_params <- c("p1", "p2", "pabx", "pfmt", "Cdot", "u", "E")
 model_outcomes <- c("n_fmts", "f_geq3", "nnt")
 
 # C. diff burden (Guh et al.)
-Cdot <- 462400
+Cdot <- 462100
 Cdot_lci <- 428600
 Cdot_uci <- 495600
 
