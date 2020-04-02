@@ -9,7 +9,7 @@ source("model.R")
 params_tbl <- read_tsv("output/parameters.tsv") %>%
   mutate(variates = map2(alpha, beta, ~ rbeta(n_variates, .x, .y)))
 
-# Primary episode cases from Lessa et al.
+# Primary episode cases from Guh et al.
 draw_normal <- function(n, mu, lci, uci) {
   obj <- function(s) {
     pred <- qnorm(ci_quantiles, mu, s)
