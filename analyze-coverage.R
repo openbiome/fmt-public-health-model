@@ -41,9 +41,7 @@ simulation_data <- simulations %>%
     ymax = quantile(n_fmts, ci_quantiles[2])
   )
 
-cat("Coverage @ 10k FMTs")
-simulation_data %>%
-  arrange(abs(y - 10000))
+write_tsv(simulation_data, "output/coverage.tsv")
 
 plot <- simulation_data %>%
   ggplot(aes(u)) +

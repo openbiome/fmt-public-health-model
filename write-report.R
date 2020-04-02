@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript --vanilla
 
 library(tidyverse)
+library(scales)
 
 source("model.R")
 
@@ -34,13 +35,34 @@ sens <- read_tsv("output/sensitivity.tsv") %>%
   filter(abs(sensitivity) > 1e-3) %>%
   mutate_at("sensitivity", ~ signif(. * 100, 2))
 
+# No. FMTs at 15% uptake ----------------------------------------------
+# Make linear interpolations of N_FMT vs. coverage (for estimate and CIs)
+nfmt_fs <- read_tsv("output/coverage.tsv") %>%
+  chop(cols = everything()) %>%
+  pivot_longer(cols = -u) %>%
+  mutate(f = map2(u, value, approxfun)) %>%
+  with({ set_names(f, name) })
+
+# Find place where N_FMT estimate hits 10k
+u <- uniroot(
+  function(x) nfmt_fs$y(x) - 1e4,
+  c(0.01, 0.99)
+)$root
+
+nfmt <- signif(nfmt_fs$y(u), 2)
+nfmt_min <- signif(nfmt_fs$ymin(u), 2)
+nfmt_max <- signif(nfmt_fs$ymax(u), 2)
+
 output <- c(
   "PARAMETERS -----------------------",
   format_tsv(params),
   "OUTCOMES -------------------------",
   format_tsv(outcomes),
   "SENSITIVITY ----------------------",
-  format_tsv(sens)
+  format_tsv(sens),
+  "UPTAKE @ 10K FMTS ----------------",
+  str_glue("Coverage: {percent(u)}"),
+  str_glue("N_FMT: {nfmt} 95% CI {nfmt_min} to {nfmt_max}")
 )
 
 write_lines(output, "output/report.txt")
